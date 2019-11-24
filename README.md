@@ -1,48 +1,48 @@
-# Decentralized Trust with Ethereum (Credit Score Scenario)
+# Confiança descentralizada com Ethereum (cenário de pontuação de crédito)
 
-This is a readable Ethereum DApp written in Solidity (and Node.js) that is based on a minimalist credit score sharing scenario. It shows how information can be shared between participants of a blockchain.
+Este é um Ethereum DApp legível, escrito em Solidity (e Node.js), baseado em um cenário minimalista de compartilhamento de pontuação de crédito. Ele mostra como as informações podem ser compartilhadas entre os participantes de uma blockchain.
 
-It is part of the [Decentralized Trust example scenario on Azure Architecture Center][architecture].
+Faz parte do cenário de exemplo [Confiança descentralizada no Centro de Arquitetura do Azure] [arquitetura].
 
-Besides the smart contract, this repository provides all of the code required to compile, deploy and communicate with the smart contract on the blockchain. It can be used as a starting point for your decentralized trust project. The compilation, deployment and various other components can also be used as boilerplate and tools within your own project.
+Além do contrato inteligente, este repositório fornece todo o código necessário para compilar, implantar e se comunicar com o contrato inteligente na blockchain. Ele pode ser usado como ponto de partida para seu projeto de confiança descentralizado. A compilação, implantação e vários outros componentes também podem ser usados ​​como clichê e ferramentas no seu próprio projeto.
 
-[Ethers.js][ethers] is used throughout this application because I like it more than the more common Web3.js. 
+[Ethers.js] [ethers] é usado em todo este aplicativo porque eu gosto mais do que o Web3.js. mais comum.
 
-Going through this README and the various referred portions of files within this repository, you will get an understanding of smart contracts and how it works within a blockchain to enable trusted exchange and sharing of information.
+Ao ler este README e as várias partes de arquivos referidas neste repositório, você entenderá os contratos inteligentes e como ele funciona dentro de uma blockchain para permitir troca e compartilhamento confiáveis ​​de informações.
 
-## Requirement
+## Requerimento
 
-You will need to have an Ethereum blockchain.
+Você precisará ter uma blockchain Ethereum.
 
-You can create a private blockchain on Azure to follow this guide. Please refer to the [Decentralized Trust example scenario on Azure Architecture Center][architecture] for more information. 
+Você pode criar uma blockchain privada no Azure para seguir este guia. Consulte o [cenário de exemplo de confiança descentralizada no Azure Architecture Center] [arquitetura] para obter mais informações.
 
-For development purposes, you can follow along with this guide for starters with Ganache:
+Para fins de desenvolvimento, você pode seguir este guia para iniciantes com Ganache:
 
 ```console
 $ ganache-cli -i 10101010 -g 0
 ```
 
-To run the code within this guide, you'll need Node.js and NPM.
+Para executar o código neste guia, você precisará do Node.js e do NPM.
 
-## Installation
 
-Just clone this repository, then run `npm install`:
+## Instalação
+
+Apenas clone este repositório e execute `npm install`:
 
 ```console
 $ git clone https://github.com/vitoc/creditscoreblockchain.git
 $ cd creditscoreblockchain
 $ npm install
 ```
+## Terminal JSON-RPC
 
-## JSON-RPC endpoint
+A primeira coisa a obter e configurar é o terminal JSON-RPC. Esse é o meio pelo qual acessamos a API do blockchain.
 
-The first thing to obtain and setup is the JSON-RPC endpoint. This is the mean by which we access the blockchain's API.
+Se você seguiu o [exemplo no centro de arquitetura do Azure] [arquitetura], essas informações estão no email enviado a você após a implantação bem-sucedida:
 
-If you'd followed the [example on Azure architecture center][architecture], this information is in the e-mail that's sent to you upon successful deployment:
+<img src = "https://github.com/vitoc/creditscoreblockchain/blob/master/media/mail.png" width = "500" />
 
-<img src="https://github.com/vitoc/creditscoreblockchain/blob/master/media/mail.png" width="500" />
-
-Place this endpoint within a `constants.js` file that you'll need to create within the directory where this repository is cloned:
+Coloque esse terminal em um arquivo `constants.js` que você precisará criar no diretório em que este repositório é clonado:
 
 ```js
 const constants = {
@@ -51,15 +51,15 @@ const constants = {
 
 module.exports = constants;
 ```
->  Do note that `constants.js` is not in the cloned repository, you'll need to create one for this purpose. 
+> Observe que o `constants.js` não está no repositório clonado, você precisará criar um para esse fim.
 
-## Chain ID
+## ID da cadeia
 
-This is to ensure we're dealing with the right chain! 
+Isso é para garantir que estamos lidando com a corrente certa!
 
-If you'd followed the [example on Azure architecture center][architecture], this is the `Network ID` that you had specified while creating the private blockchain via the Azure Portal.
+Se você seguiu o [exemplo no centro de arquitetura do Azure] [arquitetura], esta é a `ID da rede 'que você especificou ao criar a blockchain privada por meio do Portal do Azure.
 
-Place this in the `constants.js` file as well:
+Coloque isso no arquivo `constants.js` também:
 
 ```js
 const constants = {
@@ -70,99 +70,99 @@ const constants = {
 module.exports = constants;
 ```
 
-## Compiling
+## Compilando
 
-The ABI and bytecode necessary to deploy the smart contract to your Ethereum blockchain is included in this repository. Also included  is a tool that you can use to quickly (re)-compile the contract again when you make any changes, etc. This is how to use it:
+A ABI e o bytecode necessários para implantar o contrato inteligente em sua blockchain Ethereum estão incluídos neste repositório. Também está incluída uma ferramenta que você pode usar para (re) compilar rapidamente o contrato novamente quando fizer alterações, etc. É assim que usá-lo:
+
 
 ```console
 $ node compile.js contract.sol :contractName
 ```
 
-For the scenario, to re-compile, do:
+Para o cenário, para recompilar, faça:
 
 ```console
 $ node compile.js CreditScore.sol :CreditScore
 ```
+## Carteiras
 
-## Wallets
-
-For convenience, this application reads the keys of 3 required wallets from 3 files:
+Por conveniência, este aplicativo lê as chaves de 3 carteiras necessárias em 3 arquivos:
 
 * bankA.wallet
 * bankB.wallet
 * personA.wallet
 
-For testing purposes, you can generate the above wallet by running:
+Para fins de teste, você pode gerar a carteira acima executando:
 
 ```console
 $ node generate_wallet.js
 ```
 
-Of course, you can create these private keys yourself with the tools that you prefer too.
+Obviamente, você mesmo pode criar essas chaves privadas com as ferramentas de sua preferência.
 
-## Deploying the contract to the blockchain
+## Implantando o contrato na blockchain
 
-With that, we can now deploy the contract to the blockchain:
+Com isso, agora podemos implantar o contrato no blockchain:
 
 ```console
 $ node deploy_contract.js bankA.wallet
 ```
 
-Here, we use bank A's wallet to create the transaction for deployment so it is the owner of the contract. Once done, the contract's address will be shown to you. Note this down!
+Aqui, usamos a carteira do banco A para criar a transação para implantação, para que ela seja a proprietária do contrato. Uma vez feito, o endereço do contrato será mostrado a você. Anote isso!
 
-## Getting addresses of banks and persons
+## Como obter endereços de bancos e pessoas
 
-There's a nifty tool in this repository that'll show an bank or a person's address on the blockchain when given the private key of the entity:
+Há uma ferramenta bacana neste repositório que mostra o endereço de um banco ou de uma pessoa no blockchain quando recebe a chave privada da entidade:
 
 ```console
 $ node address.js bankB.wallet
 Wallet address: 0xa8F782D3dAAAAA1F1452aA9e9628cD9YYYYYAa63
 ```
 
-You'll need the addresses that are printed to screen for various reasons in subsequent calls to the blockchain.
+Você precisará dos endereços impressos na tela por vários motivos nas chamadas subseqüentes à blockchain.
 
-## Allowing other banks to update credit scores
+## Permitir que outros bancos atualizem as pontuações de crédito
 
-There is a safety check within the contract to allow only enrolled banks to update scores (we certainly don't want people updating their own scores!). 
+Há uma verificação de segurança no contrato para permitir que apenas bancos registrados atualizem as pontuações (certamente não queremos que as pessoas atualizem suas próprias pontuações!).
 
-Currently, bank A is the only entity that's allowed to update credit scores. To allow more bank B to do this as well:
+Atualmente, o banco A é a única entidade com permissão para atualizar as pontuações de crédito. Para permitir que mais bancos B façam isso também:
 
 ```console
 $ node enroll.js [YOUR CONTRACT'S ADDRESS] [BANK B'S ADDRESS]
 ```
 
-## Creating/Updating the credit score of a person
+## Criando / atualizando a pontuação de crédito de uma pessoa
 
-Here's where we finally create a credit score for a person.
+Aqui é onde finalmente criamos uma pontuação de crédito para uma pessoa.
 
-For the sake of example, let's assign a credit score for person A. First, we need to get person A's wallet address:
+Por uma questão de exemplo, vamos atribuir uma pontuação de crédito para a pessoa A. Primeiro, precisamos obter o endereço da carteira da pessoa A:
 
 $ node address.js personA.wallet
 
-Then we assign a score of 80 to person A (as identified by the wallet address):
+Em seguida, atribuímos uma pontuação de 80 à pessoa A (conforme identificado pelo endereço da carteira):
 
 ```console
 $ node score.js [YOUR CONTRACT'S ADDRESS] [PERSON A'S WALLET ADDRESS] 80
 ```
 
-You can replace 80 with any score you want (has to be a positive integer). A transaction will be created to store the person's latest credit score within the blockchain. 
+Você pode substituir 80 por qualquer pontuação que desejar (tem que ser um número inteiro positivo). Uma transação será criada para armazenar a pontuação de crédito mais recente da pessoa na blockchain.
 
-## Retrieving the score
+## Recuperando a pontuação
 
-If you dig into the code of the command below, you'll see that a wallet is required to view records on the blockchain:
+Se você digitar o código do comando abaixo, verá que é necessária uma carteira para visualizar os registros na blockchain:
 
 ```console
 $ node retrieve.js [YOUR CONTRACT'S ADDRESS] [PERSON A'S ADDRESS]
 Credit Score: 80
 ```
 
-## That's it!
+## É isso aí!
 
-The aim here is to give you an end-to-end walkthrough from creating a contract up to the point where the contract can be used to store and share information based on decentralized trust on the blockchain. Have a look at the code within the commands above to see how [Ethers.js][ethers] is used with Node.js to achieve the functionalities of the DApp.
+O objetivo aqui é fornecer uma explicação completa de como criar um contrato até o ponto em que o contrato pode ser usado para armazenar e compartilhar informações com base na confiança descentralizada na blockchain. Dê uma olhada no código nos comandos acima para ver como [Ethers.js] [ethers] é usado com o Node.js para obter as funcionalidades do DApp.
 
-## Thank you
+## Obrigado
 
-If you like this, do consider following me on [Twitter][twitter].
+Se você gosta disso, considere me seguir no [Twitter] [twitter].
 
 [architecture]: https://docs.microsoft.com/en-us/azure/architecture/example-scenario/apps/decentralized-trust
 [ethers]: https://github.com/ethers-io/ethers.js/
